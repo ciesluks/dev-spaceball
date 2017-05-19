@@ -8,7 +8,7 @@ window.addEventListener("keydown", function(e) {
 var game;
 
 window.onload = function() {
-    game = new Phaser.Game(1224, 600, Phaser.CANVAS, "gameContainer",
+    game = new Phaser.Game(1280, 600, Phaser.CANVAS, "gameContainer",
     { preload: preload, create: create, update: update });
 }
 
@@ -49,7 +49,7 @@ function ship(left, right, up, down, startPosX, startPosY){
     game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 
     this.sprite.body.collideWorldBounds = true;
-    this.sprite.body.bounce.set(0.8);
+    this.sprite.body.bounce.set(0.8,0.8);
     this.sprite.body.allowRotation = true;
     this.sprite.body.immovable = true;
 
@@ -70,17 +70,21 @@ function moveShip(ship){
     ship.sprite.body.velocity.y = 0;
     ship.sprite.body.angularVelocity = 0;
 
-    if (game.input.keyboard.isDown(ship.leftKey)
+    if (game.input.keyboard.isDown(ship.leftKey))
     {
         ship.sprite.body.angularVelocity = -200;
     }
-    else if (game.input.keyboard.isDown(ship.rightKey)
+    else if (game.input.keyboard.isDown(ship.rightKey))
     {
         ship.sprite.body.angularVelocity = 200;
     }
 
-    if (game.input.keyboard.isDown(ship.upKey)
+    if (game.input.keyboard.isDown(ship.upKey))
     {
         ship.sprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(ship.sprite.angle, 300));
+    }
+    else if (game.input.keyboard.isDown(ship.downKey))
+    {
+        ship.sprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(ship.sprite.angle, -300));
     }
 }
