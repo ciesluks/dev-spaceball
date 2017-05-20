@@ -13,16 +13,21 @@ window.onload = function() {
 }
 
 function preload(){
-    game.load.image('maze_wall', 'assets/images/maze_wall.png');
-    game.load.image('maze_floor', 'assets/images/maze_floor.png');
+    game.load.image('red_ship', 'assets/images/red_ship_1.png');
+    game.load.image('red_spaceball', 'assets/images/red_spaceball.png');
 }
 
 var ships = [];
-var ball;
+var spaceball;
 
 function create(){
     game.stage.backgroundColor = "#404040";
     game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    spaceball = game.add.sprite(576, 236, 'red_spaceball');
+    game.physics.enable(spaceball, Phaser.Physics.ARCADE);
+    spaceball.body.collideWorldBounds = true;
+    spaceball.body.bounce.set(1);
 
     ships[0] = new ship(
         Phaser.Keyboard.A,
@@ -42,16 +47,15 @@ function create(){
 }
 
 function ship(left, right, up, down, startPosX, startPosY){
-    this.sprite = game.add.sprite(startPosX, startPosY, 'maze_wall');
+    this.sprite = game.add.sprite(startPosX, startPosY, 'red_ship');
     this.sprite.name = 'ship';
     this.sprite.anchor.set(0.5);
 
     game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 
     this.sprite.body.collideWorldBounds = true;
-    this.sprite.body.bounce.set(0.8,0.8);
+    this.sprite.body.bounce.set(1);
     this.sprite.body.allowRotation = true;
-    this.sprite.body.immovable = true;
 
     this.leftKey = left;
     this.rightKey = right;
@@ -60,6 +64,9 @@ function ship(left, right, up, down, startPosX, startPosY){
 }
 
 function update(){
+    game.physics.arcade.collide(ships[0].sprite, ships[1].sprite);
+    game.physics.arcade.collide(spaceball, ships[1].sprite);
+    game.physics.arcade.collide(spaceball, ships[0].sprite);
     for(i = 0; i < ships.length; i ++){
         moveShip(ships[i]);
     }
@@ -81,10 +88,10 @@ function moveShip(ship){
 
     if (game.input.keyboard.isDown(ship.upKey))
     {
-        ship.sprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(ship.sprite.angle, 300));
+        ship.sprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(ship.sprite.angle, 400));
     }
     else if (game.input.keyboard.isDown(ship.downKey))
     {
-        ship.sprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(ship.sprite.angle, -300));
+        ship.sprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(ship.sprite.angle, -400));
     }
 }
