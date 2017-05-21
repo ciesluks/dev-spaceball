@@ -1,10 +1,3 @@
-window.addEventListener("keydown", function(e) {
-    // space and arrow keys
-    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-        e.preventDefault();
-    }
-}, false);
-
 var game;
 
 window.onload = function() {
@@ -16,6 +9,7 @@ function preload(){
     game.load.image('red_ship_1', 'assets/images/red_ship_1.png');
     game.load.image('green_ship_2', 'assets/images/green_ship_2.png');
     game.load.image('red_spaceball', 'assets/images/red_spaceball.png');
+    game.load.image('green_bullet', 'assets/images/green_bullet.png');
     game.load.physics('physicsData', './assets/polygons/polygons.json');
 }
 
@@ -36,7 +30,7 @@ function create(){
         Phaser.Keyboard.D,
         Phaser.Keyboard.W,
         Phaser.Keyboard.S,
-        200, 200,
+        200, 258,
         'red_ship_1'
     );
 
@@ -45,11 +39,11 @@ function create(){
         Phaser.Keyboard.RIGHT,
         Phaser.Keyboard.UP,
         Phaser.Keyboard.DOWN,
-        400, 400,
+        1100, 258,
         'green_ship_2'
     );
 
-    spaceball = game.add.sprite(576, 236, 'red_spaceball');
+    spaceball = game.add.sprite(608, 258, 'red_spaceball');
   	game.physics.p2.enable(spaceball, false);
   	//	Clear the shapes and load the 'contra2' polygon from the physicsData JSON file in the cache
   	spaceball.body.clearShapes();
@@ -79,7 +73,6 @@ function create(){
 
 function ship(left, right, up, down, startPosX, startPosY, ship_sprite){
     this.sprite = game.add.sprite(startPosX, startPosY, ship_sprite);
-
     game.physics.p2.enable(this.sprite, false);
     this.sprite.body.clearShapes();
   	this.sprite.body.loadPolygon('physicsData', ship_sprite);
@@ -99,13 +92,11 @@ function update(){
 function moveShip(ship){
     if (game.input.keyboard.isDown(ship.leftKey))
     {
-        //ship.sprite.body.rotateLeft(200);
-        ship.sprite.body.angularVelocity = -3;
+        ship.sprite.body.angularVelocity = -5;
     }
     else if (game.input.keyboard.isDown(ship.rightKey))
     {
-        //ship.sprite.body.rotateRight(200);
-        ship.sprite.body.angularVelocity = 3;
+        ship.sprite.body.angularVelocity = 5;
     }
     else {ship.sprite.body.setZeroRotation();}
 
