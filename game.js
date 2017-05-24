@@ -2,7 +2,7 @@ var game;
 
 window.onload = function() {
     game = new Phaser.Game(1280, 600, Phaser.CANVAS, "gameContainer",
-    { preload: preload, create: create, update: update });
+    { preload: preload, create: create, update: update, render: render });
 }
 
 function preload(){
@@ -17,6 +17,7 @@ var ships = [];
 var spaceball;
 
 function create(){
+    game.time.advancedTiming = true;
     game.stage.backgroundColor = "#404040";
 
     //	Enable p2 physics
@@ -111,4 +112,8 @@ function moveShip(ship){
         ship.sprite.body.reverse(800);
     }
     else {ship.sprite.body.damping = 0.8;}
+}
+
+function render() {
+    game.debug.text(game.time.fps, 2, 14, "#00ff00");
 }
