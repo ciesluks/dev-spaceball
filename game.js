@@ -15,6 +15,8 @@ function preload(){
 
 var ships = [];
 var spaceball;
+var goalLeft;
+var goalRight;
 
 function create(){
     game.time.advancedTiming = true;
@@ -31,7 +33,7 @@ function create(){
         Phaser.Keyboard.D,
         Phaser.Keyboard.W,
         Phaser.Keyboard.S,
-        200, 258,
+        180, 300,
         'red_ship_1'
     );
 
@@ -40,16 +42,28 @@ function create(){
         Phaser.Keyboard.RIGHT,
         Phaser.Keyboard.UP,
         Phaser.Keyboard.DOWN,
-        1100, 258,
+        1100, 300,
         'green_ship_2'
     );
 
-    spaceball = game.add.sprite(608, 258, 'red_spaceball');
+    spaceball = game.add.sprite(640, 300, 'red_spaceball');
   	game.physics.p2.enable(spaceball, false);
-  	//	Clear the shapes and load the 'contra2' polygon from the physicsData JSON file in the cache
   	spaceball.body.clearShapes();
   	spaceball.body.loadPolygon('physicsData', 'red_spaceball');
     spaceball.body.mass = 0.2;
+
+    goalLeft = game.add.sprite(0, 300, null);
+    game.physics.p2.enable(goalLeft, true);
+    goalLeft.body.setRectangle(10, 200);
+    goalLeft.body.static = true;
+    goalRight = game.add.sprite(game.width, 300, null);
+    game.physics.p2.enable(goalRight, true);
+    goalRight.body.setRectangle(10, 200);
+    goalRight.body.static = true;
+
+    spaceball.body.createBodyCallback(goalLeft, resetGame, this);
+    spaceball.body.createBodyCallback(goalRight, resetGame, this);
+    game.physics.p2.setImpactEvents(true);
 
     var ballMaterial = game.physics.p2.createMaterial('ballMaterial', spaceball.body);
     var worldMaterial = game.physics.p2.createMaterial('worldMaterial');
@@ -85,30 +99,28 @@ function ship(left, right, up, down, startPosX, startPosY, ship_sprite){
 }
 
 function update(){
-    for(i = 0; i < ships.length; i ++){
+    for (i = 0; i < ships.length; i ++){
         moveShip(ships[i]);
     }
 }
 
+function resetGame(ball, goal){
+    game.state.restart();
+}
+
 function moveShip(ship){
-    if (game.input.keyboard.isDown(ship.leftKey))
-    {
+    if (game.input.keyboard.isDown(ship.leftKey)){
         ship.sprite.body.angularVelocity = -5;
     }
-    else if (game.input.keyboard.isDown(ship.rightKey))
-    {
+    else if (game.input.keyboard.isDown(ship.rightKey)){
         ship.sprite.body.angularVelocity = 5;
     }
     else {ship.sprite.body.setZeroRotation();}
 
-    if (game.input.keyboard.isDown(ship.upKey))
-    {
-        //ship.sprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(ship.sprite.angle, 400));
+    if (game.input.keyboard.isDown(ship.upKey)){
         ship.sprite.body.thrust(1000);
     }
-    else if (game.input.keyboard.isDown(ship.downKey))
-    {
-        //ship.sprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(ship.sprite.angle, -400));
+    else if (game.input.keyboard.isDown(ship.downKey)){
         ship.sprite.body.reverse(800);
     }
     else {ship.sprite.body.damping = 0.8;}
